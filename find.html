@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- import CSS -->
+  <link rel="stylesheet" href="http://www.xiaohuaa.top/files/css/element_index.css">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+  <style>
+  *{
+    transition:0.2s;
+  }
+  header{
+  	width: 70%;
+    border-bottom: 1px solid #ccc;
+    margin: 0 auto;
+  }
+  .person_img{
+    height:80px;
+  }
+  .mid{
+    width:70%;margin: 0 auto;
+  }
+  .el-table td{
+    padding: 3px 0;
+  </style>
+</head>
+<body>
+<div id="app">
+  <header>
+  	<h3 align="center">学生搜索</h3>
+  </header>
+    <el-main>
+    <form class="mid" method="get" onsubmit="app.search();return false;" action="">
+  	  <el-input v-model="stu_name" placeholder="请输入姓名" style="width:30%;"></el-input>
+      <el-button @click="search">确定</el-button>
+      <span v-if="student_datas!=[]" style="margin-left:20px;">查询结果：{{student_datas.length}}条记录</span>
+    </form>
+          <el-table
+            :data="student_datas"
+            stripe
+            class="mid">
+            <el-table-column
+              label="图片">
+              <template scope=scope>
+                <img :src="img_src(scope.row[3])" class="person_img">
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="所在单位">
+              <template scope=scope>
+                {{scope.row[0]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="班级名称">
+              <template scope=scope>
+                {{scope.row[1]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="姓名"
+              sortable>
+              <template scope=scope>
+                {{scope.row[2]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="学号"
+              sortable>
+              <template scope=scope>
+                {{scope.row[3]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="性别">
+              <template scope=scope>
+                {{scope.row[4]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="操作">
+              <template scope=scope>
+                <el-button @click="kebiao(scope.row[3])">课表</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-table
+            :data="kebiao_datas"
+            stripe
+            class="mid"
+            v-if="kebiao_show">
+            <el-table-column
+              label="">
+              <template scope=scope>
+                {{scope.row[0]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期一">
+              <template scope=scope>
+                {{scope.row[1]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期二">
+              <template scope=scope>
+                {{scope.row[2]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期三">
+              <template scope=scope>
+                {{scope.row[3]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期四">
+              <template scope=scope>
+                {{scope.row[4]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期五">
+              <template scope=scope>
+                {{scope.row[5]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期六">
+              <template scope=scope>
+                {{scope.row[6]}}
+              </template>
+            </el-table-column>
+            <el-table-column
+              label="星期日">
+              <template scope=scope>
+                {{scope.row[7]}}
+              </template>
+            </el-table-column>
+          </el-table>
+  </el-main>
+  <el-footer>
+  	
+  </el-footer>
+</div>
+  <script src="http://www.xiaohuaa.top/hufun.js"></script>
+  <script src="http://www.xiaohuaa.top/files/js/vue.js"></script>
+  <script src="http://www.xiaohuaa.top/files/js/element_index.js"></script>
+  <script>
+    var app=new Vue({
+      el: '#app',
+      data: {
+        stu_name:"",
+        student_datas:[],
+        kebiao_datas:[],
+        kebiao_show:false
+      },
+      methods:{
+      	search:function(){
+          if(this.stu_name=="")
+            return alert("请输入关键信息");
+      		var that=this;
+		   	ajax({
+          url:window.location.origin+"/search?name="+that.stu_name,
+          dataType:"json",
+          // callback:"callback",
+          success:function(data){
+            data.splice(0,1);
+            data.splice(0,1);
+		   		  that.student_datas=data;
+		   	  }
+		   	});
+      	},
+        img_src:function(xuehao){
+          return "http://jwc.jxnu.edu.cn/StudentPhoto/"+xuehao+".jpg";
+        },
+        kebiao:function(xuehao){
+          this.kebiao_show=!this.kebiao_show;
+          var that=this;
+          ajax({
+            url:window.location.origin+"/kebiao?xuehao="+xuehao,
+            dataType:"json",
+            // callback:"callback",
+            success:function(data){
+              that.kebiao_datas=data;
+            }
+        });
+        }
+      }
+    })
+  </script>
+</html>
